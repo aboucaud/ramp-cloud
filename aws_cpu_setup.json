@@ -1,0 +1,58 @@
+{
+  "variables": {
+    "aws_access_key": "",
+    "aws_secret_key": "",
+    "ramp_kit_name": "",
+    "conda_env_file": "ramp_environment.yml",
+    "backend_data_dir": "./data/"
+  },
+  "sensitive-variables": [
+    "aws_access_key",
+    "aws_secret_key"
+  ],
+  "builders": [
+    {
+      "type": "amazon-ebs",
+      "access_key": "{{user `aws_access_key`}}",
+      "secret_key": "{{user `aws_secret_key`}}",
+      "region": "us-west-2",
+      "source_ami" : "ami-0bbe6b35405ecebdb",
+      "instance_type": "t2.micro",
+      "ssh_username": "ubuntu",
+      "ami_name": "{{user `ramp_kit_name`}}_backend"
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "inline": [
+        "sudo apt-get update",
+        "sudo apt-get upgrade --yes"
+      ],
+      "pause_before": "5s"
+    },
+    {
+      "type": "shell",
+      "environment_vars": "KIT_NAME={{user `ramp_kit_name`}}",
+      "script": "./scripts/kit_setup.sh"
+    },
+    {
+      "type": "file",
+      "source": "./environments/{{user `conda_env_file`}}",
+      "destination": "/tmp/"
+    },
+    {
+      "type": "shell",
+      "environment_vars": [
+        "ENV_FILE=/tmp/{{user `conda_env_file`}}",
+        "KIT_NAME={{user `ramp_kit_name`}}"
+      ],
+      "script": "./scripts/miniconda_install.sh"
+    },
+    {
+      "type": "file",
+      "source": "{{user `backend_data_dir`}}",
+      "destination": "/home/ubuntu/ramp-kits/{{user `ramp_kit_name`}}/data"
+    }
+  ]
+}
