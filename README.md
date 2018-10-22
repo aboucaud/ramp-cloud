@@ -115,7 +115,33 @@ These credentials can be obtained in your Amazon account, see
 [Google Compute Engine setup][gce_setup]
 
 
-
 [aws_setup]: https://docs.aws.amazon.com/fr_fr/sdk-for-net/v2/developer-guide/net-dg-config-creds.html
 [azure_setup]: https://www.packer.io/docs/builders/azure-setup.html
 [gce_setup]: https://cloud.google.com/compute/docs/access/create-enable-service-accounts-for-instances
+
+
+## Add ons
+
+### Amazon EC2
+
+Once AWS credentials are set locally, a Python command line interface is 
+available to perform a few actions:
+
+- list the EC2 instances by state (default is 'running')
+   ```bash
+   python aws.py instance list [--state <state>]
+   ```
+- list the registered AMIs
+   ```bash
+   python aws.py ami list
+   ```
+- given an AMI ID, print the corresponding name
+   ```bash
+   python aws.py ami name <ami-id>
+   ```
+- deregister an AMI from EC2
+   ```bash
+   python aws.py ami delete <ami-id> [--dry-run]
+   ```
+
+This CLI needs `Click` and the `boto3` libraries to work, see `requirements.txt`.
