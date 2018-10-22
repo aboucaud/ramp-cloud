@@ -13,14 +13,17 @@ Currently only Amazon EC2 is supported. Microsoft Azure and Google Compute Engin
 
 3. select the `.json` config file corresponding to the backend provider (`aws | azure | gcloud`), as well as the hardware you need (`cpu | gpu`)
 
-4. run Packer
+4. run Packer and specify the name of the starting kit (used on *github.com/ramp_kits*) and the backend data directory
    ```bash
-   packer build -var ramp_kit_name=kit_name -var backend_data_dir=/path/to/data/ config.json
+   packer build -var ramp_kit_name=<kit_name> -var backend_data_dir=/path/to/data/ config.json
    ```
-   Example command for creating the backend AWS AMI with pure CPU support for the `autism` starting kit; where the backend data files are stored in a local directory `./autism/testdata/`
+   This will create a virtual image called `<kit_name>_backend`.
+
+**Example:** command for creating the backend AWS AMI with pure CPU support for the `autism` starting kit; where the backend data files are stored in a local directory `./autism/testdata/`
    ```bash
    packer build -var ramp_kit_name=autism -var backend_data_dir=./autism/testdata/ aws_cpu_setup.json
    ```
+   This will produce an AMI called `autism_backend`.
 
 ## Packer
 
