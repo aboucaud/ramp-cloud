@@ -11,9 +11,14 @@ Currently only Amazon EC2 is supported. Microsoft Azure and Google Compute Engin
 
 2. set up your cloud credentials (see [here](#Credentials))
 
-3. select the `.json` config file corresponding to the backend provider (`aws | azure | gcloud`), as well as the hardware you need (`cpu | gpu`)
+3. clone this repo
+   ```bash
+   git clone https://github.com/aboucaud/ramp-cloud.git && cd ramp-cloud
+   ```
 
-4. run Packer and specify the name of the starting kit (used on *github.com/ramp_kits*) and the backend data directory
+4. select the `.json` config file in the directory corresponding to the backend provider (`aws | azure | gcloud`), as well as the hardware you need (`cpu | gpu`)
+
+5. run Packer and specify the name of the starting kit (used on *github.com/ramp_kits*) and the backend data directory
    ```bash
    packer build -var ramp_kit_name=<kit_name> -var backend_data_dir=/path/to/data/ config.json
    ```
