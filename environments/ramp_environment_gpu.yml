@@ -20,7 +20,6 @@ dependencies:
   - psutil
   - cloudpickle
   - gitpython
+  - memory_profiler
   - pip:
     - https://api.github.com/repos/paris-saclay-cds/ramp-backend/zipball/master
-    - https://api.github.com/repos/pythonprofilers/memory_profiler/zipball/master
-
