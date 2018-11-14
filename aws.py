@@ -52,6 +52,11 @@ def get_instance(id):
     return ec2.Instance(id=id)
 
 
+def get_instance(id):
+    ec2 = boto3.resource('ec2')
+    return ec2.Instance(id=id)
+
+
 def get_instances(state='running'):
     ec2 = boto3.resource('ec2')
     return ec2.instances.filter(
