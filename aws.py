@@ -35,6 +35,11 @@ def get_amis():
     return ec2_resources.images.filter(Owners=["self"])
 
 
+def get_instance(id):
+    ec2 = boto3.resource('ec2')
+    return ec2.Instance(id=id)
+
+
 def get_instances(state='running'):
     ec2 = boto3.resource('ec2')
     return ec2.instances.filter(
@@ -177,6 +182,21 @@ def instance_list(state: str):
             type=instance.instance_type,
             key=instance.key_name,
             dns=instance.public_dns_name))
+
+
+
+@instance.command('terminate')
+@click.argument('instance_id', type=click.STRING)
+def terminate_instance(instance_id: str):
+    "Terminate an instance running on AWS"
+    instance = get_instance(instance_id)
+
+    if instance.state['Name'] != 'running':
+        sys.exit("Provided instance not currently running. "
+                 "Operation Aborting.")
+    else:
+        instance.terminate()
+        click.echo(f"Instance {instance_id} now terminating.")
 
 
 if __name__ == '__main__':
