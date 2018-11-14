@@ -7,6 +7,10 @@ Currently supported actions:
 
     $ python aws.py instance list [--state <state>]
 
+- create an EC2 instance with a specific AMI
+
+    $ python aws.py instance create <ami-id>
+
 - list the registered AMIs
 
     $ python aws.py ami list
@@ -31,8 +35,8 @@ INSTANCE_STATES = ['running', 'stopped', 'pending',
 
 
 def get_amis():
-    ec2_resources = boto3.resource('ec2')
-    return ec2_resources.images.filter(Owners=["self"])
+    ec2 = boto3.resource('ec2')
+    return ec2.images.filter(Owners=["self"])
 
 
 def get_instance(id):
@@ -44,6 +48,19 @@ def get_instances(state='running'):
     ec2 = boto3.resource('ec2')
     return ec2.instances.filter(
         Filters=[{'Name': 'instance-state-name', 'Values': [state]}])
+
+
+def create_instance(ami_id, key, itype='t2.micro'):
+    ec2 = boto3.resource('ec2')
+    instance_list = ec2.create_instances(
+        ImageId=ami_id,
+        InstanceType=itype,
+        KeyName=key,
+        MinCount=1,
+        MaxCount=1
+        )
+
+    return instance_list[0]
 
 
 def delete_ami(ami_id: str, dry_run: bool):
@@ -127,7 +144,7 @@ def ami_name(ami_id):
         if ami.id == ami_id:
             ami_found = True
             click.echo(ami.name)
-    
+
     if not ami_found:
         click.echo("No registered AMI found with this ID")
 
@@ -183,6 +200,30 @@ def instance_list(state: str):
             key=instance.key_name,
             dns=instance.public_dns_name))
 
+
+@instance.command('create')
+@click.argument('ami_id', type=click.STRING)
+@click.option('-k', '--key', type=click.STRING, default='alexandre',
+              help="Name of the secret key pair")
+@click.option('-t', '--type', type=click.STRING, default='t2.micro',
+              help="EC2 instance type")
+def launch_instance(ami_id: str, key: str, type: str):
+    "Create an instance on AWS with specific AMI"
+    current_ami_ids = [ami.id for ami in get_amis()]
+    if ami_id not in current_ami_ids:
+        msg = ("Provided AMI id invalid. Use the ami-list command to check "
+               "for AMIs belonging to you.")
+        sys.exit(click.echo(msg))
+
+    instance = create_instance(ami_id, key, type)
+    click.echo("Instance launching, please wait..")
+    inst_id = instance.id
+    instance.wait_until_running()
+    click.echo(f"Instance {inst_id} successfully launched.")
+
+    click.echo("Now accessible via the command")
+    public_dns = get_instance(inst_id).public_dns_name
+    click.echo(f"ssh -i ~/.ssh/{key}.pem ubuntu@{public_dns}")
 
 
 @instance.command('terminate')
