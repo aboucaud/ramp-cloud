@@ -11,9 +11,17 @@ Currently supported actions:
 
     $ python aws.py instance create <ami-id>
 
+- terminate a specific EC2 instance
+
+    $ python aws.py instance terminate <instance-id>
+
 - list the registered AMIs
 
     $ python aws.py ami list
+
+- print the command-line to create and register an AMI
+
+    $ python aws.py ami create -n <kit_name> -d <data_directory> [+ options]
 
 - given an AMI ID, print the corresponding name
 
