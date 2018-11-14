@@ -11,13 +11,10 @@ Currently supported actions:
 
     $ python aws.py instance create <ami-id>
 
-<<<<<<< HEAD
 - terminate a specific EC2 instance
 
     $ python aws.py instance terminate <instance-id>
 
-=======
->>>>>>> Add instance create
 - list the registered AMIs
 
     $ python aws.py ami list
