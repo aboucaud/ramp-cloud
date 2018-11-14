@@ -68,6 +68,41 @@ def ami():
     "Manages AWS AMI"
 
 
+@ami.command('create')
+@click.option('-n', '--kit-name', type=str, required=True,
+              help=("RAMP kit name. Must be available as a repository on "
+                    "https://github.com/ramp_kits"))
+@click.option('-d', '--data-dir', type=click.Path(exists=True), required=True,
+              help="Directory containing the training|testing data")
+@click.option('-b', '--backend', type=click.Choice(['aws']),
+              default='aws', show_default=True,
+              help="Choice of backend")
+@click.option('-c', '--compute-type', type=click.Choice(['cpu', 'gpu']),
+              default='cpu', show_default=True,
+              help="Choice of computing type")
+@click.option('-s', '--suffix', type=str,
+              default='backend', show_default=True,
+              help="Suffix of the AMI name")
+def ami_create(kit_name: str, data_dir: str, backend: str,
+               compute_type: str, suffix: str):
+    "Create an AMI for a RAMP kit"
+    # Make sure to only rsync the files and not the directory
+    if not data_dir.endswith('/'):
+        data_dir += '/'
+
+    options = " ".join([
+        f"-var ramp_kit_name={kit_name}",
+        f"-var backend_data_dir={data_dir}",
+        f"-var ami_suffix_name={suffix}"
+    ])
+    config = f"{backend}_{compute_type}_setup.json"
+
+    cmd = f"packer build {options} {config}"
+
+    click.echo("Run the following command:")
+    click.echo(cmd)
+
+
 @ami.command('list')
 def ami_list():
     "List the registered AMIs"
