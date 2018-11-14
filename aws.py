@@ -11,10 +11,13 @@ Currently supported actions:
 
     $ python aws.py instance create <ami-id>
 
+<<<<<<< HEAD
 - terminate a specific EC2 instance
 
     $ python aws.py instance terminate <instance-id>
 
+=======
+>>>>>>> Add instance create
 - list the registered AMIs
 
     $ python aws.py ami list
@@ -45,11 +48,6 @@ INSTANCE_STATES = ['running', 'stopped', 'pending',
 def get_amis():
     ec2 = boto3.resource('ec2')
     return ec2.images.filter(Owners=["self"])
-
-
-def get_instance(id):
-    ec2 = boto3.resource('ec2')
-    return ec2.Instance(id=id)
 
 
 def get_instance(id):
