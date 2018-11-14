@@ -116,7 +116,7 @@ def ami_list():
 @ami.command('name')
 @click.argument('ami_id', type=click.STRING)
 def ami_name(ami_id):
-    "Print the name of the given AMI"
+    "Print the name of a registered AMI"
     ami_found = False
     for ami in get_amis():
         if ami.id == ami_id:
@@ -133,7 +133,7 @@ def ami_name(ami_id):
               help='Practice run to check whether this action '
                    'can be performed')
 def ami_delete(ami_id: str, dry_run: bool):
-    "Delete the registered AMIs"
+    "Delete a registered AMI"
     current_ami_ids = [ami.id for ami in get_amis()]
     if ami_id not in current_ami_ids:
         msg = ("Provided AMI id invalid. Use the ami-list command to check "
