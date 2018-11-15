@@ -4,7 +4,8 @@
     "aws_secret_key": "",
     "ramp_kit_name": "",
     "conda_env_file": "ramp_environment_gpu.yml",
-    "backend_data_dir": "./data/"
+    "backend_data_dir": "",
+    "ami_suffix_name": "backend_gpu"
   },
   "sensitive-variables": [
     "aws_access_key",
@@ -19,7 +20,7 @@
       "source_ami" : "ami-067fd9478cfe2477d",
       "instance_type": "t2.micro",
       "ssh_username": "ubuntu",
-      "ami_name": "{{user `ramp_kit_name`}}_backend_gpu"
+      "ami_name": "{{user `ramp_kit_name`}}_{{user `ami_suffix_name`}}"
     }
   ],
   "provisioners": [
